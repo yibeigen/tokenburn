@@ -39,6 +39,18 @@
 
 **系统要求**: Node.js **>= 22.5.0**（依赖内置 `node:sqlite`；22.5~23.3 需附加 `--experimental-sqlite` 标志，推荐 23.4+）
 
+### 双击运行（零命令行）
+
+下载本项目后，双击根目录对应的启动脚本即可，无需打开命令行：
+
+| 系统 | 双击文件 | 说明 |
+|---|---|---|
+| Windows | `start.bat` | 弹出控制台窗口运行，关闭窗口即停止 |
+| macOS | `start.command` | 在 Terminal 中运行（首次需右键→打开绕过 Gatekeeper） |
+| Linux | `start.sh` | 命令行执行 `./start.sh`（双击行为依桌面环境而定） |
+
+脚本会自动检测 Node.js 是否安装，未装则提示去 https://nodejs.org/ 下载。
+
 ### 源码运行
 
 ```bash
