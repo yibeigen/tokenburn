@@ -1,0 +1,45 @@
+{
+  "name": "tokenburn",
+  "version": "1.1.0",
+  "description": "全网首款全生态 AI Token 战绩聚合与赛博看板系统 (支持 Claude Code, Codex, 华为码道, Workbuddy, 反重力 IDE, Trae 等)",
+  "type": "module",
+  "main": "bin/tokenburn.js",
+  "bin": {
+    "tokenburn": "./bin/tokenburn.js"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "start": "node bin/tokenburn.js",
+    "scan": "node bin/tokenburn.js --scan-only",
+    "check": "node bin/tokenburn.js --version && node --check bin/tokenburn.js && node --check src/server/server.js && node --check src/core/scanner.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "keywords": [
+    "ai",
+    "token-tracker",
+    "antigravity",
+    "claude-code",
+    "codearts",
+    "workbuddy",
+    "trae",
+    "codex",
+    "dashboard"
+  ],
+  "author": "TokenBurn Contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yibeigen/tokenburn.git"
+  },
+  "homepage": "https://github.com/yibeigen/tokenburn#readme",
+  "bugs": {
+    "url": "https://github.com/yibeigen/tokenburn/issues"
+  }
+}

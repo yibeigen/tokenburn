@@ -1,0 +1,24 @@
+# 运行时数据（含个人会话信息，严禁入库）
+data/
+*.log
+
+# 依赖与构建产物
+node_modules/
+dist/
+
+# IDE / 编辑器
+.idea/
+.vscode/
+*.swp
+
+# OS
+Thumbs.db
+.DS_Store
+
+# 脚手架与临时文件
+_*.mjs
+_*.js
+# 本地工具与内部文档（含个人协作细节，不入公开仓库）
+.inscode/
+.merkle-snapshot.json
+docs/

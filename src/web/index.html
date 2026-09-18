@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TokenBurn · 全生态 AI Token 战绩看板与算力功德榜</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Outfit:wght@400;600;700;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Outfit:wght@400;600;700;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap"></noscript>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="cyber-theme">
+  <!-- Background Glow & Grid -->
+  <div class="bg-mesh"></div>
+  <div class="bg-grid"></div>
+
+  <!-- Header Navigation -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo-box">
+        <svg class="logo-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M13 2 4.5 13.5H11L9.5 22 19 10h-6.5L13 2z"></path>
+        </svg>
+        <div class="logo-text">
+          <span class="brand-title">TokenBurn</span>
+          <span class="brand-sub">算力战绩中心</span>
+        </div>
+      </div>
+      <div class="status-badge" id="engine-status">
+        <span class="pulse-dot"></span>
+        <span id="status-text">已连接本地 6 款 AI 引擎</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="snapshot-pill" id="snapshot-pill" title="数据存储状态：优先从本地快照极速载入">
+        <span class="snapshot-dot"></span>
+        <span id="snapshot-status-text">本地历史快照已就绪</span>
+      </div>
+      <div class="live-pill" id="live-pill" title="实时监控状态">
+        <span class="live-dot"></span>
+        <span id="live-status-text">连接实时监控...</span>
+      </div>
+      <button class="btn btn-secondary" id="btn-theme-toggle" title="切换亮色/暗色主题">
+        <span id="theme-text">暗色模式</span>
+      </button>
+      <button class="btn btn-secondary btn-sync" id="btn-refresh" title="扫描并同步自上次以来的最新 Token 消耗">
+        <span id="btn-sync-text">同步最新数据</span>
+      </button>
+      <button class="btn btn-primary" id="btn-share-poster">
+        <span>生成战报海报</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- Hero Banner: Total War Record -->
+    <section class="hero-card glassmorphism" id="section-hero">
+      <div class="hero-left">
+        <div class="rank-tag-wrapper">
+          <span class="rank-badge" id="hero-badge"></span>
+          <span class="rank-title" id="hero-rank-title">赛博大贤者</span>
+          <span class="rank-en" id="hero-rank-en">CYBER ARCHMAGE</span>
+        </div>
+        <p class="hero-desc" id="hero-rank-desc">破亿 Token 工业化巨匠，AI 时代核心驱动力。</p>
+        
+        <div class="big-counter-box">
+          <div class="counter-label">全生态累计消耗 TOKEN</div>
+          <div class="counter-value-wrapper">
+            <span class="counter-number" id="total-tokens-num">0</span>
+            <span class="counter-unit">TOKENS</span>
+          </div>
+        </div>
+
+        <div class="hero-substats">
+          <div class="substat-item">
+            <span class="substat-label">输入算力 (Input)</span>
+            <span class="substat-val" id="stat-input-tokens">-</span>
+          </div>
+          <div class="substat-item">
+            <span class="substat-label">输出生成 (Output)</span>
+            <span class="substat-val" id="stat-output-tokens">-</span>
+          </div>
+          <div class="substat-item">
+            <span class="substat-label">累计会话数</span>
+            <span class="substat-val" id="stat-session-count">-</span>
+          </div>
+          <div class="substat-item">
+            <span class="substat-label">数据可信度</span>
+            <span class="substat-val" id="stat-accuracy" title="真实统计：读取官方 usage 字段，精确无误；模型估算：本地无官方计数，按负载/轮数模型折算">-</span>
+          </div>
+        </div>
+
+        <!-- Milestone Trophy Wall -->
+        <div class="milestone-wall" id="milestone-wall">
+          <!-- Dynamically populated milestone trophy badges -->
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="productivity-card">
+          <div class="prod-header">
+
+            <span class="prod-title">战力等效换算</span>
+          </div>
+          <div class="prod-metric">
+            <div class="metric-num" id="stat-lines-code">-</div>
+            <div class="metric-label">等效 AI 辅助编写代码 (行)</div>
+          </div>
+          <div class="prod-metric">
+            <div class="metric-num highlight" id="stat-hours-saved">-</div>
+            <div class="metric-label">节约人类编码工时 (小时)</div>
+          </div>
+          <div class="scan-time-tag" id="stat-scan-time">
+            耗时 0.0s 自动完成全盘侦测
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Grid: Tool Breakdown & Heatmap -->
+    <div class="grid-2col">
+      <!-- Tool Ecosystem Breakdown -->
+      <section class="card glassmorphism" id="section-tools">
+        <div class="card-header">
+        <div class="card-title-box">
+          <h3>本机已激活 AI Agent 战力分布</h3>
+        </div>
+          <span class="card-tag" id="tool-count-tag">智能侦测本机生态</span>
+        </div>
+        <div class="tools-list" id="tools-container">
+          <!-- Dynamically populated: Only detected active tools -->
+        </div>
+
+        <div class="supported-tools-footer">
+          <div class="supported-tools-toggle" id="toggle-supported-tools">
+
+            <span id="supported-summary-text">已激活 8 款 · 点击查看支持的全部 14 款 AI Agent</span>
+            <span class="toggle-arrow" id="supported-arrow">▾</span>
+          </div>
+          <div class="supported-tools-grid" id="supported-tools-grid" style="display: none;">
+            <!-- Dynamically populated: Full matrix status chips -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Model Distribution -->
+      <section class="card glassmorphism" id="section-models">
+        <div class="card-header">
+          <div class="card-title-box">
+            <h3>调遣模型</h3>
+            <span class="card-tag">主流模型架构</span>
+          </div>
+        </div>
+        <div class="models-container" id="models-list">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+    </div>
+
+    <!-- ECharts Visualization Suite (full-width chart cards) -->
+    <section class="card glassmorphism full-width" id="section-charts">
+      <div class="card-header">
+        <div class="card-title-box">
+          <h3>战绩可视化面板</h3>
+          <span class="card-tag">ECharts · 实时渲染</span>
+        </div>
+      </div>
+
+      <div class="chart-metrics-grid">
+        <div class="chart-box">
+          <h4 class="sub-heading">工具算力占比</h4>
+          <div id="chart-tools-donut" class="echart-canvas"></div>
+        </div>
+        <div class="chart-box">
+          <h4 class="sub-heading">综合战力雷达</h4>
+          <div id="chart-power-radar" class="echart-canvas"></div>
+        </div>
+      </div>
+
+      <div class="input-output-bar" id="chart-io-bar"></div>
+
+      <div class="monthly-chart-box">
+        <h4 class="sub-heading">月度消耗对比</h4>
+        <div id="chart-monthly-area" class="echart-canvas"></div>
+      </div>
+    </section>
+
+
+    <!-- 365 Days Token Burn Heatmap -->
+    <!-- 365 Days & Monthly Dual-Mode Token Heatmap -->
+    <section class="card glassmorphism full-width" id="section-heatmap">
+      <div class="card-header heatmap-header-stacked">
+        <div class="heatmap-header-top">
+          <div class="card-title-box">
+            <h3>AI 算力时空热力图 (Token Chrono-Heatmap)</h3>
+            <span class="card-tag" id="heatmap-active-indicator">全部工具 · 全生态透视</span>
+          </div>
+
+          <!-- View Mode Switcher -->
+          <div class="view-mode-switcher" id="view-mode-switcher">
+            <button class="view-btn active" id="btn-view-panoramic" data-view="panoramic" title="365天连续流动全景年历">
+              <span>全景年历</span>
+            </button>
+            <button class="view-btn" id="btn-view-monthly" data-view="monthly" title="12个月标准月历日历矩阵">
+              <span>月度日历</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tool Filter Bar & Legend -->
+        <div class="heatmap-controls-bar">
+          <div class="tool-filter-group" id="heatmap-tool-filters">
+            <button class="filter-pill active" data-tool="ALL">全部工具</button>
+            <button class="filter-pill" data-tool="Claude Code">Claude Code</button>
+            <button class="filter-pill" data-tool="反重力 IDE">反重力 IDE</button>
+            <button class="filter-pill" data-tool="Trae">Trae</button>
+            <button class="filter-pill" data-tool="华为码道云">华为码道云</button>
+            <button class="filter-pill" data-tool="Workbuddy">Workbuddy</button>
+            <button class="filter-pill" data-tool="Codex">Codex</button>
+          </div>
+
+          <div class="heatmap-legend" id="heatmap-legend">
+            <span>较少</span>
+            <span class="legend-cell lvl-0"></span>
+            <span class="legend-cell lvl-1"></span>
+            <span class="legend-cell lvl-2"></span>
+            <span class="legend-cell lvl-3"></span>
+            <span class="legend-cell lvl-4"></span>
+            <span>巨量狂飙</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panoramic View (52 Weeks Stream) -->
+      <div class="heatmap-view-pane" id="view-panoramic">
+        <div class="heatmap-wrapper">
+          <div class="heatmap-weekdays-col">
+            <span>周一</span>
+            <span>周三</span>
+            <span>周五</span>
+            <span>周日</span>
+          </div>
+          <div class="heatmap-grid" id="heatmap-grid">
+            <!-- 52 columns of days -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Monthly Calendar Grid View (Month-by-Month Cards) -->
+      <div class="heatmap-view-pane" id="view-monthly" style="display: none;">
+        <div class="monthly-calendar-grid" id="monthly-calendar-grid">
+          <!-- Dynamically populated 12 month cards -->
+        </div>
+      </div>
+
+      <div class="heatmap-footer" id="heatmap-footer">
+        <div class="heatmap-stat-item">
+          <span class="stat-indicator-dot"></span>
+          <span id="active-days-stat">活跃天数: - 天</span>
+        </div>
+        <div class="heatmap-stat-item">
+          <span class="stat-indicator-dot peak"></span>
+          <span id="max-day-stat">单日最高消耗: - Tokens</span>
+        </div>
+        <div class="heatmap-stat-item">
+          <span class="stat-indicator-dot streak"></span>
+          <span id="streak-stat"><span class="streak-flame">🔥</span> 连续燃烧: - 天</span>
+        </div>
+        <div class="heatmap-stat-item">
+          <span class="stat-indicator-dot curr"></span>
+          <span id="current-filter-stat">当前透视: 全部 AI 工具 · 全景年历</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Floating Interactive Popover Tooltip for Heatmap Cells -->
+    <div id="heatmap-tooltip" class="heatmap-popover" style="display: none;"></div>
+
+    <!-- Recent Sessions / Battle History -->
+    <section class="card glassmorphism full-width" id="section-history">
+      <div class="card-header">
+        <div class="card-title-box">
+          <h3>重点任务算力流水账（每次对话究竟花了多少 Token）</h3>
+          <span class="card-tag">人话标题 · 自动换算等效字数与代码量</span>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="session-table">
+          <thead>
+            <tr>
+              <th style="width: 130px">工具来源</th>
+              <th>任务内容（你当时在做什么）</th>
+              <th style="width: 240px">消耗算力 (Token 与等效换算)</th>
+              <th style="width: 170px">调遣模型</th>
+              <th style="width: 140px">发生时间</th>
+            </tr>
+          </thead>
+          <tbody id="session-table-body">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Poster Modal -->
+  <div class="modal-overlay" id="poster-modal">
+    <div class="modal-card glassmorphism">
+      <div class="modal-header">
+          <h3>你的赛博战绩专属海报</h3>
+        <button class="btn-close" id="btn-close-modal">X</button>
+      </div>
+      <div class="modal-body">
+        <div class="canvas-container">
+          <canvas id="poster-canvas" width="1200" height="675"></canvas>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btn-copy-poster">复制图片到剪贴板</button>
+        <button class="btn btn-primary" id="btn-download-poster">下载高清战报图片</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="vendor/echarts.min.js"></script>
+  <script src="app.js?v=3.6"></script>
+</body>
+</html>
