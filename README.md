@@ -1,4 +1,13 @@
-# TokenBurn
+<div align="center">
+  <a href="https://github.com/yibeigen/tokenburn">
+    <img src="assets/logo.svg" width="112" height="112" alt="TokenBurn Logo" />
+  </a>
+  <h1>TokenBurn</h1>
+  <p>全生态 AI 编程算力聚合与去水战绩看板系统</p>
+  <p>纯本地运行 · 零配置即开即用 · 16 款主流工具自动识别 · 100% 隐私安全</p>
+</div>
+
+---
 
 TokenBurn 是一款本地优先的 AI 编程算力聚合与战绩看板工具。
 
