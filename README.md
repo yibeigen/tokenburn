@@ -21,7 +21,10 @@ TokenBurn 是一款本地优先的 AI 编程算力聚合与战绩看板工具。
 
 - **作者**：艺杯羹 ([@yibeigen](https://github.com/yibeigen))
 - **CSDN 博客**：[https://blog.csdn.net/qq_46987323](https://blog.csdn.net/qq_46987323)（分享 AI 提效工具、自主 Agent 架构与全栈开发实战）
-- **GitHub 仓库**：[https://github.com/yibeigen/tokenburn](https://github.com/yibeigen/tokenburn)
+- **开源代码仓库**：
+  - **GitHub**：[https://github.com/yibeigen/tokenburn](https://github.com/yibeigen/tokenburn)
+  - **Gitee (国内极速)**：[https://gitee.com/yibeigen/tokenburn](https://gitee.com/yibeigen/tokenburn)
+  - **AtomGit (开放原子)**：[https://atomgit.com/yibeigen/tokenburn](https://atomgit.com/yibeigen/tokenburn)
 - **微信公众号**：**艺杯羹**
 
 <div align="center">
@@ -124,8 +127,11 @@ npx tokenburn
 
 ### 方式 3：源码运行
 ```bash
-# 1. 克隆代码仓库
-git clone https://github.com/yibeigen/tokenburn.git
+# 1. 克隆代码仓库（任选其一，国内推荐 Gitee 或 AtomGit）
+git clone https://gitee.com/yibeigen/tokenburn.git       # Gitee (国内极速)
+# 或: git clone https://atomgit.com/yibeigen/tokenburn.git # AtomGit (开放原子)
+# 或: git clone https://github.com/yibeigen/tokenburn.git  # GitHub
+
 cd tokenburn
 
 # 2. 启动服务（自动扫描并打开浏览器看板）

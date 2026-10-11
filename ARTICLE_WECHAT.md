@@ -80,11 +80,13 @@ TokenBurn 引入去水折算模型，首先砍掉 85% 的上下文水分，只�
 
 ### 4. 项目开源，开箱即用
 
-工具目前已在 GitHub 完全开源，免编译安装。
+工具目前已在 GitHub、Gitee 与 AtomGit 完全开源，免编译安装。
 Windows 双击 `start.bat`，Mac 或 Linux 双击 `start.command` 即可直达看板。
 
-代码仓库地址：
-`https://github.com/yibeigen/tokenburn`
+代码仓库地址（任选其一）：
+* **Gitee (国内极速)**：`https://gitee.com/yibeigen/tokenburn`
+* **AtomGit (开放原子)**：`https://atomgit.com/yibeigen/tokenburn`
+* **GitHub**：`https://github.com/yibeigen/tokenburn`
 
 个人技术博客：
 `https://blog.csdn.net/qq_46987323`

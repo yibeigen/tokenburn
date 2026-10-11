@@ -24,3 +24,5 @@ _*.js
 docs/
 .ui-backup/
 scratch/
+__pycache__/
+*.pyc
