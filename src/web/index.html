@@ -527,9 +527,48 @@
     <div class="footer-container">
       <div class="footer-brand-col">
         <div class="footer-brand">
-          <span class="footer-logo-icon"><svg class="ico"><use href="#i-zap"/></svg></span>
+          <div class="brand-logo-emblem footer-logo-emblem" title="TokenBurn · 全生态 AI Token 算力战绩看板">
+            <svg class="brand-logo-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="tb-emblem-bg-ft" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ff7a1a" stop-opacity="0.2"/>
+                  <stop offset="100%" stop-color="#0284c7" stop-opacity="0.12"/>
+                </linearGradient>
+                <linearGradient id="tb-emblem-stroke-ft" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ff7a1a" stop-opacity="0.8"/>
+                  <stop offset="50%" stop-color="#f59e0b" stop-opacity="0.6"/>
+                  <stop offset="100%" stop-color="#00f2fe" stop-opacity="0.8"/>
+                </linearGradient>
+                <linearGradient id="tb-flame-outer-ft" x1="0%" y1="100%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#e11d48"/>
+                  <stop offset="30%" stop-color="#ea580c"/>
+                  <stop offset="70%" stop-color="#f59e0b"/>
+                  <stop offset="100%" stop-color="#fbbf24"/>
+                </linearGradient>
+                <linearGradient id="tb-flame-inner-ft" x1="0%" y1="100%" x2="50%" y2="0%">
+                  <stop offset="0%" stop-color="#0284c7"/>
+                  <stop offset="60%" stop-color="#00f2fe"/>
+                  <stop offset="100%" stop-color="#ffffff"/>
+                </linearGradient>
+                <filter id="tb-flame-glow-ft" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="1.5" stdDeviation="1.6" flood-color="#ea580c" flood-opacity="0.45"/>
+                </filter>
+              </defs>
+              <rect x="2" y="2" width="32" height="32" rx="9" fill="url(#tb-emblem-bg-ft)" stroke="url(#tb-emblem-stroke-ft)" stroke-width="1.3"/>
+              <!-- 炽阳主烈焰 (Cyber Flame) -->
+              <path d="M 18 29.5 C 13.2 29.5 8 24.5 8 18 C 8 12.8 11.2 9.5 13.5 6.5 C 13.9 6 14.7 6.2 14.7 6.8 C 14.7 9.8 17 12 19 12 C 21 12 21.6 9.8 21.3 7.5 C 21.1 5.8 22.8 4.8 24 6 C 27 9 28 13.5 28 18.5 C 28 24.5 23.2 29.5 18 29.5 Z" fill="url(#tb-flame-outer-ft)" filter="url(#tb-flame-glow-ft)"/>
+              <!-- AI 等离子冷焰 (Plasma Inner Core) -->
+              <path d="M 18 27 C 14.8 27 12 23.8 12 19.8 C 12 16.5 13.8 14 15 12 C 15.4 11.5 16 11.8 16 12.3 C 16 14.2 17.5 16 19 16 C 20.5 16 21 14.5 21 13.2 C 21 12.4 22 11.8 22.8 12.8 C 24 14.5 24.5 17 24.5 20 C 24.5 24 21.5 27 18 27 Z" fill="url(#tb-flame-inner-ft)"/>
+              <!-- 中心悬浮 Token 晶核 (Quantum Spark) -->
+              <polygon points="18,17.5 20.8,21 18,24.5 15.2,21" fill="#ffffff" opacity="0.95"/>
+              <circle cx="18" cy="21" r="1" fill="#00f2fe"/>
+              <!-- 能量火星微粒 (Quantum Embers) -->
+              <circle cx="25.5" cy="8" r="1" fill="#fbbf24" opacity="0.9"/>
+              <circle cx="10" cy="9" r="0.8" fill="#00f2fe" opacity="0.85"/>
+            </svg>
+          </div>
           <span class="footer-brand-name">TokenBurn</span>
-          <span class="footer-version-tag">v3.6</span>
+          <span class="footer-version-tag">v1.1.0</span>
         </div>
         <p class="footer-desc">
           专为全栈工程师与 AI 极客打造的本地优先（Local-First）AI 战绩看板。聚合 16 款主流 AI 编程助手与 Agent 算力消耗，让每一次心智投入都有迹可循。
