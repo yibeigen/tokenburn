@@ -50,6 +50,16 @@ TokenBurn 是一款本地优先的 AI 编程算力聚合与战绩看板工具。
 
 ![TokenBurn 亮色看板预览](assets/preview-light.png)
 
+### 战绩可视化多维矩阵
+清晰洞察 16 款工具算力占比环形图、时序累计跃升曲线、月度燃烧速率柱状图，以及输入/输出 Tokens 的真实比例（精准呈现 13.8 : 1 的上下文依赖度）。
+
+![TokenBurn 战绩可视化多维矩阵](assets/preview-charts.png)
+
+### AI 算力时空热力图
+仿 GitHub 贡献墙全景日历热力图，精准记录 200+ 天人机协同轨迹，包含单日峰值与连续燃烧天数实时统计。
+
+![TokenBurn AI 算力时空热力图](assets/preview-heatmap.png)
+
 ---
 
 ## 版本更新记录
