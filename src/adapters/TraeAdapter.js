@@ -37,8 +37,9 @@ export class TraeAdapter {
             } catch (e) {}
           }
 
+          let db = null;
           try {
-            const db = new DatabaseSync(dbFile, { readOnly: true });
+            db = new DatabaseSync(dbFile, { readOnly: true });
 
             let sessionList = [];
             let wsTurns = 0;
@@ -158,7 +159,10 @@ export class TraeAdapter {
                 }
               });
             }
-          } catch (e) {}
+          } catch (e) {
+          } finally {
+            try { db?.close(); } catch (e) {}
+          }
         }
       } catch (e) {
         console.error(`[TraeAdapter] 扫描 ${variant} 异常:`, e.message);

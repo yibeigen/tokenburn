@@ -15,8 +15,9 @@ export class QoderAdapter {
     // 注: chat_message/chat_record 的 content 为密文, token_info 为 NULL, 只能按轮数估算
     const localDbPath = path.join(home, '.qoder-cn', 'shared_client', 'cache', 'db', 'local.db');
     if (fs.existsSync(localDbPath)) {
+      let db = null;
       try {
-        const db = new DatabaseSync(localDbPath, { readOnly: true });
+        db = new DatabaseSync(localDbPath, { readOnly: true });
         const sessions = db.prepare('SELECT session_id, session_title, project_name, gmt_create, gmt_modified, mode FROM chat_session').all();
         const sessionMeta = new Map(sessions.map(s => [s.session_id, s]));
 
@@ -60,7 +61,10 @@ export class QoderAdapter {
           });
           seen.add(t.session_id);
         }
-      } catch (e) {}
+      } catch (e) {
+      } finally {
+        try { db?.close(); } catch (e) {}
+      }
     }
 
     // 数据源 B: Quest 模式 conversation-history (明文 JSONL)

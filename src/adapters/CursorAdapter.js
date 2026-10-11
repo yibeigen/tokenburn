@@ -30,8 +30,9 @@ export class CursorAdapter {
             } catch (e) {}
           }
 
+          let db = null;
           try {
-            const db = new DatabaseSync(dbFile, { readOnly: true });
+            db = new DatabaseSync(dbFile, { readOnly: true });
             const chatRow = db.prepare("SELECT value FROM ItemTable WHERE key LIKE '%aichat.chatdata%' OR key LIKE '%composer.composerData%' LIMIT 1").get();
             if (chatRow) {
               const stat = fs.statSync(dbFile);
@@ -62,7 +63,10 @@ export class CursorAdapter {
                 details: { project: projectName, prompt }
               });
             }
-          } catch (e) {}
+          } catch (e) {
+          } finally {
+            try { db?.close(); } catch (e) {}
+          }
         }
       } catch (e) {}
     }

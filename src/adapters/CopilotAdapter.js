@@ -31,8 +31,9 @@ export class CopilotAdapter {
           } catch(e) {}
         }
 
+        let db = null;
         try {
-          const db = new DatabaseSync(dbFile, { readOnly: true });
+          db = new DatabaseSync(dbFile, { readOnly: true });
           const row = db.prepare("SELECT value FROM ItemTable WHERE key = 'chat.ChatSessionStore.index' OR key LIKE '%interactive-session%' LIMIT 1").get();
           if (row && row.value) {
             let sessionCount = 1;
@@ -65,7 +66,10 @@ export class CopilotAdapter {
               }
             });
           }
-        } catch(e) {}
+        } catch(e) {
+        } finally {
+          try { db?.close(); } catch(e) {}
+        }
       }
     } catch(e) {
       console.error('[CopilotAdapter] 扫描异常:', e.message);

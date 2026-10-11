@@ -61,6 +61,27 @@ export async function scanAllAdapters(onlyNames = null) {
 }
 
 /**
+ * 基于本地时区格式化日期为 YYYY-MM-DD，口径与前端 formatLocalDate 完全一致，杜绝 UTC 时区偏差
+ */
+export function formatLocalDate(dateInput) {
+  const d = dateInput instanceof Date ? dateInput : new Date(dateInput);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+/**
+ * 基于本地时区格式化月份为 YYYY-MM
+ */
+export function formatLocalMonth(dateInput) {
+  const d = dateInput instanceof Date ? dateInput : new Date(dateInput);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  return `${year}-${month}`;
+}
+
+/**
  * 阶段二：纯聚合。从原始记录计算 toolStats/热力图/模型分布/段位等全部派生数据。
  * 供全量扫描与实时监控共用，输入输出均为可 JSON 序列化的普通对象。
  */
@@ -122,8 +143,8 @@ export function aggregateRecords(recordsByAdapter, errorByAdapter = {}, duration
   for (const r of allRecords) {
     if (!r.timestamp) continue;
     const date = new Date(r.timestamp);
-    const dateStr = date.toISOString().slice(0, 10);
-    const monthStr = date.toISOString().slice(0, 7);
+    const dateStr = formatLocalDate(date);
+    const monthStr = formatLocalMonth(date);
     const tool = r.tool || 'Other';
     const tokens = r.totalTokens || 0;
 
@@ -154,6 +175,20 @@ export function aggregateRecords(recordsByAdapter, errorByAdapter = {}, duration
     modelStats[m] = (modelStats[m] || 0) + (r.totalTokens || 0);
   }
 
+  // 24小时极客生物钟分布 (0点..23点)
+  const hourlyMap = new Array(24).fill(0);
+  const hourlyCountMap = new Array(24).fill(0);
+  for (const r of allRecords) {
+    if (!r.timestamp) continue;
+    try {
+      const h = new Date(r.timestamp).getHours();
+      if (h >= 0 && h < 24) {
+        hourlyMap[h] += (r.totalTokens || 0);
+        hourlyCountMap[h] += 1;
+      }
+    } catch {}
+  }
+
   const rank = getRankInfo(grandTotal);
 
   return {
@@ -171,8 +206,8 @@ export function aggregateRecords(recordsByAdapter, errorByAdapter = {}, duration
       rank,
       exactTotal,
       estimatedTotal,
-      estimatedLinesOfCode: Math.round(grandTotal * 0.005),
-      estimatedHoursSaved: Math.round((grandTotal / 10000) * 1.8)
+      estimatedLinesOfCode: Math.round(((totalOutput > 0 ? totalOutput : Math.round(grandTotal * 0.08))) / 120),
+      estimatedHoursSaved: Math.round(Math.round(((totalOutput > 0 ? totalOutput : Math.round(grandTotal * 0.08))) / 120) / 80)
     },
     toolStats,
     dailyMap,
@@ -180,6 +215,8 @@ export function aggregateRecords(recordsByAdapter, errorByAdapter = {}, duration
     dailyMapByTool,
     monthlyMapByTool,
     dailyTasksMap,
+    hourlyMap,
+    hourlyCountMap,
     modelStats,
     topSessions: allRecords.slice(0, 30)
   };

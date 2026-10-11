@@ -2,7 +2,7 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { exec } from 'node:child_process';
+import { exec, spawn } from 'node:child_process';
 import { scanAllAdapters, aggregateRecords } from '../core/scanner.js';
 import { startRealtimeMonitor } from '../core/watcher.js';
 import { loadSnapshot, saveSnapshot } from '../core/storage.js';
@@ -51,13 +51,35 @@ function handleEventStream(req, res) {
 }
 
 // ---------------- 数据聚合与落盘 ----------------
-function applyRecords(recordsByAdapter, errorByAdapter, durationMs, realtime) {
+export function applyRecords(recordsByAdapter, errorByAdapter, durationMs, realtime) {
   lastRecordsByAdapter = recordsByAdapter;
   const data = aggregateRecords(recordsByAdapter, errorByAdapter, durationMs);
   const saved = saveSnapshot(data);
   if (realtime) saved.meta.realtime = true;
   cachedData = saved;
   return saved;
+}
+
+export function getCachedData() {
+  return cachedData;
+}
+
+export function setCachedData(data, recordsByAdapter = null) {
+  cachedData = data;
+  if (recordsByAdapter) lastRecordsByAdapter = recordsByAdapter;
+}
+
+export async function syncFreshStats() {
+  broadcast('scanning', { tools: ['全生态扫描'] });
+  try {
+    const { recordsByAdapter, errorByAdapter, durationMs } = await scanAllAdapters();
+    const saved = applyRecords(recordsByAdapter, errorByAdapter, durationMs, false);
+    broadcast('update', saved);
+    return saved;
+  } catch (err) {
+    broadcast('error', { message: err.message });
+    throw err;
+  }
 }
 
 export async function getStats(forceRefresh = false) {
@@ -75,8 +97,7 @@ export async function getStats(forceRefresh = false) {
   // 2. 初次启动无快照 或 用户主动点击“⚡ 同步最新数据”
   try {
     console.log('[TokenBurn] 正在执行全生态深度扫描...');
-    const { recordsByAdapter, errorByAdapter, durationMs } = await scanAllAdapters();
-    const saved = applyRecords(recordsByAdapter, errorByAdapter, durationMs, false);
+    const saved = await syncFreshStats();
     return {
       ...saved,
       meta: {
@@ -103,7 +124,11 @@ export async function getStats(forceRefresh = false) {
 }
 
 // ---------------- 实时监控接入 ----------------
+let realtimeStarted = false;
 function startRealtime() {
+  if (realtimeStarted) return;
+  realtimeStarted = true;
+
   startRealtimeMonitor({
     getRecordsByAdapter: () => lastRecordsByAdapter,
     onScanning: (dirtyNames) => {
@@ -119,11 +144,6 @@ function startRealtime() {
 }
 
 export function startServer(port = 3000, autoOpen = true, host = '127.0.0.1') {
-  // 若初次启动且本地无快照，触发后台初次扫描并落盘
-  if (!cachedData) {
-    getStats(true).catch(e => console.error('[TokenBurn] 初次预热扫描异常:', e.message));
-  }
-
   startRealtime();
 
   const server = http.createServer(async (req, res) => {
@@ -143,6 +163,100 @@ export function startServer(port = 3000, autoOpen = true, host = '127.0.0.1') {
       } catch (e) {
         res.writeHead(500, { 'Content-Type': 'application/json' });
         return res.end(JSON.stringify({ error: e.message }));
+      }
+    }
+
+    if (url.pathname === '/api/snapshot-data') {
+      const snapPath = path.join(__dirname, '..', '..', 'data', 'snapshot.json');
+      if (fs.existsSync(snapPath)) {
+        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+        return fs.createReadStream(snapPath).pipe(res);
+      } else {
+        res.writeHead(404, { 'Content-Type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify({ error: '本地归档快照尚未生成' }));
+      }
+    }
+
+    if (url.pathname === '/api/snapshot-download') {
+      const snapPath = path.join(__dirname, '..', '..', 'data', 'snapshot.json');
+      if (fs.existsSync(snapPath)) {
+        res.writeHead(200, {
+          'Content-Type': 'application/octet-stream',
+          'Content-Disposition': 'attachment; filename="snapshot.json"'
+        });
+        return fs.createReadStream(snapPath).pipe(res);
+      } else {
+        res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+        return res.end('Snapshot file not found');
+      }
+    }
+
+    if (url.pathname === '/api/open-data') {
+      const dataDirPath = path.join(__dirname, '..', '..', 'data');
+      const snapPath = path.join(dataDirPath, 'snapshot.json');
+      const action = url.searchParams.get('action') || 'file'; // 'file' or 'dir'
+
+      try {
+        const fileExists = fs.existsSync(snapPath);
+        let stats = null;
+        if (fileExists) {
+          try {
+            const st = fs.statSync(snapPath);
+            stats = { size: st.size, mtime: st.mtime };
+          } catch {}
+        }
+
+        if (action === 'info') {
+          // Just query metadata and paths without opening system windows
+        } else if (action === 'dir') {
+          if (process.platform === 'win32') {
+            // Windows 下使用 PowerShell Invoke-Item 直接呼起文件管理器打开 data 目录
+            exec(`powershell -NoProfile -Command "Invoke-Item '${dataDirPath}'"`);
+            if (fileExists) {
+              setTimeout(() => {
+                exec(`powershell -NoProfile -Command "& explorer.exe /select,'${snapPath}'"`);
+              }, 120);
+            }
+          } else if (process.platform === 'darwin') {
+            if (fileExists) {
+              exec(`open -R "${snapPath}"`);
+            } else {
+              exec(`open "${dataDirPath}"`);
+            }
+          } else {
+            exec(`xdg-open "${dataDirPath}"`);
+          }
+        } else {
+          // Open the file directly
+          if (fileExists) {
+            if (process.platform === 'win32') {
+              exec(`powershell -NoProfile -Command "Invoke-Item '${snapPath}'"`);
+            } else if (process.platform === 'darwin') {
+              exec(`open "${snapPath}"`);
+            } else {
+              exec(`xdg-open "${snapPath}"`);
+            }
+          } else {
+            if (process.platform === 'win32') {
+              exec(`powershell -NoProfile -Command "Invoke-Item '${dataDirPath}'"`);
+            } else {
+              exec(`xdg-open "${dataDirPath}"`);
+            }
+          }
+        }
+        res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify({ 
+          ok: true, 
+          action, 
+          path: snapPath, 
+          dir: dataDirPath, 
+          exists: fileExists,
+          size: stats?.size || 0,
+          mtime: stats?.mtime || null
+        }));
+      } catch (err) {
+        res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
+        return res.end(JSON.stringify({ ok: false, error: err.message, path: snapPath }));
       }
     }
 

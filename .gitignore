@@ -22,3 +22,5 @@ _*.js
 .inscode/
 .merkle-snapshot.json
 docs/
+.ui-backup/
+scratch/

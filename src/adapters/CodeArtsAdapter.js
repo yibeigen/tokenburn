@@ -14,8 +14,9 @@ export class CodeArtsAdapter {
       return records;
     }
 
+    let db = null;
     try {
-      const db = new DatabaseSync(dbPath, { readOnly: true });
+      db = new DatabaseSync(dbPath, { readOnly: true });
 
       // Fetch sessions map for human-readable titles
       const sessionMap = new Map();
@@ -95,6 +96,8 @@ export class CodeArtsAdapter {
       }
     } catch (e) {
       console.error('[CodeArtsAdapter] 扫描异常:', e.message);
+    } finally {
+      try { db?.close(); } catch (e) {}
     }
 
     return records;

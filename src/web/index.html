@@ -1,54 +1,190 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" id="meta-color-scheme" content="dark">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%231e1b4b'/%3E%3Cstop offset='100%25' stop-color='%230f172a'/%3E%3C/linearGradient%3E%3ClinearGradient id='fo' x1='0%25' y1='100%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%23e11d48'/%3E%3Cstop offset='30%25' stop-color='%23ea580c'/%3E%3Cstop offset='70%25' stop-color='%23f59e0b'/%3E%3Cstop offset='100%25' stop-color='%23fbbf24'/%3E%3C/linearGradient%3E%3ClinearGradient id='fi' x1='0%25' y1='100%25' x2='50%25' y2='0%25'%3E%3Cstop offset='0%25' stop-color='%230284c7'/%3E%3Cstop offset='60%25' stop-color='%2300f2fe'/%3E%3Cstop offset='100%25' stop-color='%23ffffff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='36' height='36' rx='9' fill='url(%23bg)' stroke='%23ea580c' stroke-width='1.5'/%3E%3Cpath d='M18 29.5C13.2 29.5 8 24.5 8 18C8 12.8 11.2 9.5 13.5 6.5C13.9 6 14.7 6.2 14.7 6.8C14.7 9.8 17 12 19 12C21 12 21.6 9.8 21.3 7.5C21.1 5.8 22.8 4.8 24 6C27 9 28 13.5 28 18.5C28 24.5 23.2 29.5 18 29.5Z' fill='url(%23fo)'/%3E%3Cpath d='M18 27C14.8 27 12 23.8 12 19.8C12 16.5 13.8 14 15 12C15.4 11.5 16 11.8 16 12.3C16 14.2 17.5 16 19 16C20.5 16 21 14.5 21 13.2C21 12.4 22 11.8 22.8 12.8C24 14.5 24.5 17 24.5 20C24.5 24 21.5 27 18 27Z' fill='url(%23fi)'/%3E%3Cpolygon points='18,17.5 20.8,21 18,24.5 15.2,21' fill='%23ffffff'/%3E%3Ccircle cx='18' cy='21' r='1' fill='%2300f2fe'/%3E%3Ccircle cx='25.5' cy='8' r='1' fill='%23fbbf24'/%3E%3C/svg%3E">
+  <script>
+    (function () {
+      try {
+        var urlTheme = new URLSearchParams(window.location.search).get('theme');
+        var saved = urlTheme || localStorage.getItem('tokenburn_theme') || 'dark';
+        if (urlTheme) localStorage.setItem('tokenburn_theme', urlTheme);
+        document.documentElement.setAttribute('data-theme', saved);
+        document.documentElement.style.backgroundColor = (saved === 'light') ? '#f4f6fb' : '#07090e';
+        document.documentElement.style.colorScheme = saved;
+        var meta = document.getElementById('meta-color-scheme');
+        if (meta) meta.setAttribute('content', saved);
+      } catch (e) {}
+    })();
+  </script>
+  <style id="theme-preload-style">
+    /* 立即在第 0 帧锁死首屏背景与文字底色，杜绝任何外链 CSS 加载延迟造成的黑白屏闪烁 */
+    html {
+      background-color: #07090e;
+    }
+    html[data-theme="light"],
+    html[data-theme="light"] body {
+      background-color: #f4f6fb !important;
+      color: #0f172a !important;
+      color-scheme: light !important;
+    }
+    html[data-theme="dark"],
+    html[data-theme="dark"] body {
+      background-color: #07090e !important;
+      color: #f8fafc !important;
+      color-scheme: dark !important;
+    }
+    /* 彻底杜绝全局背景与文字色的过渡动画（暗色就暗色，亮色就亮色，纯粹即时着色，杜绝刷新与切换时的渐变闪黑假象） */
+    html, body, .glassmorphism, .card, .app-header, .app-footer, .author-card, .productivity-card {
+      transition-property: transform, opacity, box-shadow, border-color !important;
+    }
+  </style>
   <title>TokenBurn · 全生态 AI Token 战绩看板与算力功德榜</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Outfit:wght@400;600;700;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Outfit:wght@400;600;700;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap"></noscript>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=5.4">
 </head>
 <body class="cyber-theme">
-  <!-- Background Glow & Grid -->
-  <div class="bg-mesh"></div>
+  <!-- Background Grid -->
   <div class="bg-grid"></div>
+
+  <!-- ===== 统一线性图标库（SVG sprite，页面内用 <svg class="ico"><use href="#i-xxx"/></svg> 引用） ===== -->
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute;overflow:hidden" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></symbol>
+    <symbol id="i-pie" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></symbol>
+    <symbol id="i-trend" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></symbol>
+    <symbol id="i-activity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></symbol>
+    <symbol id="i-trophy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></symbol>
+    <symbol id="i-crown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></symbol>
+    <symbol id="i-rocket" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2z"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></symbol>
+    <symbol id="i-database" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></symbol>
+    <symbol id="i-clipboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 12h6M9 16h4"/></symbol>
+    <symbol id="i-bars" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></symbol>
+    <symbol id="i-filetext" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></symbol>
+    <symbol id="i-megaphone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></symbol>
+    <symbol id="i-coffee" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+  </svg>
 
   <!-- Header Navigation -->
   <header class="app-header">
     <div class="header-left">
       <div class="logo-box">
-        <svg class="logo-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M13 2 4.5 13.5H11L9.5 22 19 10h-6.5L13 2z"></path>
-        </svg>
+        <div class="brand-logo-emblem" title="TokenBurn · 全生态 AI Token 算力战绩看板">
+          <svg class="brand-logo-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="tb-emblem-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ff7a1a" stop-opacity="0.2"/>
+                <stop offset="100%" stop-color="#0284c7" stop-opacity="0.12"/>
+              </linearGradient>
+              <linearGradient id="tb-emblem-stroke" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ff7a1a" stop-opacity="0.8"/>
+                <stop offset="50%" stop-color="#f59e0b" stop-opacity="0.6"/>
+                <stop offset="100%" stop-color="#00f2fe" stop-opacity="0.8"/>
+              </linearGradient>
+              <linearGradient id="tb-flame-outer" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#e11d48"/>
+                <stop offset="30%" stop-color="#ea580c"/>
+                <stop offset="70%" stop-color="#f59e0b"/>
+                <stop offset="100%" stop-color="#fbbf24"/>
+              </linearGradient>
+              <linearGradient id="tb-flame-inner" x1="0%" y1="100%" x2="50%" y2="0%">
+                <stop offset="0%" stop-color="#0284c7"/>
+                <stop offset="60%" stop-color="#00f2fe"/>
+                <stop offset="100%" stop-color="#ffffff"/>
+              </linearGradient>
+              <filter id="tb-flame-glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="1.5" stdDeviation="1.6" flood-color="#ea580c" flood-opacity="0.45"/>
+              </filter>
+            </defs>
+            <rect x="2" y="2" width="32" height="32" rx="9" fill="url(#tb-emblem-bg)" stroke="url(#tb-emblem-stroke)" stroke-width="1.3"/>
+            <!-- 炽阳主烈焰 (Cyber Flame) -->
+            <path d="M 18 29.5 C 13.2 29.5 8 24.5 8 18 C 8 12.8 11.2 9.5 13.5 6.5 C 13.9 6 14.7 6.2 14.7 6.8 C 14.7 9.8 17 12 19 12 C 21 12 21.6 9.8 21.3 7.5 C 21.1 5.8 22.8 4.8 24 6 C 27 9 28 13.5 28 18.5 C 28 24.5 23.2 29.5 18 29.5 Z" fill="url(#tb-flame-outer)" filter="url(#tb-flame-glow)"/>
+            <!-- AI 等离子冷焰 (Plasma Inner Core) -->
+            <path d="M 18 27 C 14.8 27 12 23.8 12 19.8 C 12 16.5 13.8 14 15 12 C 15.4 11.5 16 11.8 16 12.3 C 16 14.2 17.5 16 19 16 C 20.5 16 21 14.5 21 13.2 C 21 12.4 22 11.8 22.8 12.8 C 24 14.5 24.5 17 24.5 20 C 24.5 24 21.5 27 18 27 Z" fill="url(#tb-flame-inner)"/>
+            <!-- 中心悬浮 Token 晶核 (Quantum Spark) -->
+            <polygon points="18,17.5 20.8,21 18,24.5 15.2,21" fill="#ffffff" opacity="0.95"/>
+            <circle cx="18" cy="21" r="1" fill="#00f2fe"/>
+            <!-- 能量火星微粒 (Quantum Embers) -->
+            <circle cx="25.5" cy="8" r="1" fill="#fbbf24" opacity="0.9"/>
+            <circle cx="10" cy="9" r="0.8" fill="#00f2fe" opacity="0.85"/>
+          </svg>
+        </div>
         <div class="logo-text">
           <span class="brand-title">TokenBurn</span>
           <span class="brand-sub">算力战绩中心</span>
         </div>
       </div>
-      <div class="status-badge" id="engine-status">
+      <div class="status-badge" id="engine-status" title="已连接本地 10 款活跃 AI 引擎 (支持 16 款)">
         <span class="pulse-dot"></span>
-        <span id="status-text">已连接本地 6 款 AI 引擎</span>
+        <span id="status-text">10 款引擎活跃</span>
       </div>
     </div>
     <div class="header-right">
-      <div class="snapshot-pill" id="snapshot-pill" title="数据存储状态：优先从本地快照极速载入">
-        <span class="snapshot-dot"></span>
-        <span id="snapshot-status-text">本地历史快照已就绪</span>
+      <div class="status-group">
+        <div class="snapshot-pill" id="snapshot-pill" title="本地数据归档文件位于 token/data/snapshot.json">
+          <span class="snapshot-dot"></span>
+          <span id="snapshot-status-text">快照已归档</span>
+          <button class="pill-mini-btn" id="btn-open-snap-file" title="调用系统默认程序直接打开 snapshot.json 文件"><svg class="ico"><use href="#i-file"/></svg> 打开</button>
+          <button class="pill-mini-btn" id="btn-open-snap-dir" title="在 Windows 资源管理器中定位所在文件夹"><svg class="ico"><use href="#i-folder"/></svg> 定位</button>
+        </div>
+        <div class="live-pill" id="live-pill" title="实时监控状态：检测到本地 AI 工具会话时自动增量重扫">
+          <span class="live-dot"></span>
+          <span id="live-status-text">监控中</span>
+        </div>
       </div>
-      <div class="live-pill" id="live-pill" title="实时监控状态">
-        <span class="live-dot"></span>
-        <span id="live-status-text">连接实时监控...</span>
-      </div>
-      <button class="btn btn-secondary" id="btn-theme-toggle" title="切换亮色/暗色主题">
-        <span id="theme-text">暗色模式</span>
+
+      <!-- GitHub & Star Button -->
+      <a href="https://github.com/yibeigen/tokenburn" target="_blank" rel="noopener noreferrer" class="btn btn-github" title="在 GitHub 查看 TokenBurn 源码与给 Star">
+        <svg class="gh-icon" viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path></svg>
+        <span class="btn-text-collapsible">GitHub</span>
+        <span class="gh-star-badge"><svg class="ico ico-fill"><use href="#i-star"/></svg> Star</span>
+      </a>
+
+      <!-- Author Capsule -->
+      <button class="author-capsule" id="header-author-btn" title="查看作者介绍与更多信息">
+        <img src="assets/avatar.png" alt="作者" class="author-avatar-mini-img">
+        <span class="author-name-mini">作者</span>
+      </button>
+
+      <button class="btn btn-secondary btn-icon-only" id="btn-theme-toggle" title="切换亮色/暗色主题">
+        <span class="btn-icon" id="theme-icon"><svg class="ico"><use href="#i-moon"/></svg></span>
+        <span class="btn-text-collapsible" id="theme-text">暗色</span>
       </button>
       <button class="btn btn-secondary btn-sync" id="btn-refresh" title="扫描并同步自上次以来的最新 Token 消耗">
-        <span id="btn-sync-text">同步最新数据</span>
+        <span class="btn-icon" id="sync-icon"><svg class="ico"><use href="#i-refresh"/></svg></span>
+        <span class="btn-text-collapsible" id="btn-sync-text">同步</span>
       </button>
-      <button class="btn btn-primary" id="btn-share-poster">
-        <span>生成战报海报</span>
+      <button class="btn btn-primary" id="btn-share-poster" title="生成高清战报海报">
+        <span class="btn-icon"><svg class="ico"><use href="#i-image"/></svg></span>
+        <span>战报海报</span>
       </button>
     </div>
   </header>
@@ -56,65 +192,118 @@
   <main class="main-container">
     <!-- Hero Banner: Total War Record -->
     <section class="hero-card glassmorphism" id="section-hero">
-      <div class="hero-left">
-        <div class="rank-tag-wrapper">
-          <span class="rank-badge" id="hero-badge"></span>
-          <span class="rank-title" id="hero-rank-title">赛博大贤者</span>
-          <span class="rank-en" id="hero-rank-en">CYBER ARCHMAGE</span>
-        </div>
-        <p class="hero-desc" id="hero-rank-desc">破亿 Token 工业化巨匠，AI 时代核心驱动力。</p>
-        
-        <div class="big-counter-box">
-          <div class="counter-label">全生态累计消耗 TOKEN</div>
-          <div class="counter-value-wrapper">
-            <span class="counter-number" id="total-tokens-num">0</span>
-            <span class="counter-unit">TOKENS</span>
+      <div class="hero-top-row">
+        <div class="hero-left">
+          <div class="rank-tag-wrapper">
+            <span class="rank-badge" id="hero-badge">E7</span>
+            <span class="rank-title" id="hero-rank-title">首席工程架构师</span>
+          </div>
+          <p class="hero-desc" id="hero-rank-desc">全域智能体工程集群总控，算力吞吐突破 5 亿大关。</p>
+          
+          <div class="big-counter-box">
+            <div class="counter-label">全生态累计消耗 TOKEN</div>
+            <div class="counter-value-wrapper">
+              <span class="counter-number" id="total-tokens-num">0</span>
+              <span class="counter-unit">TOKENS</span>
+            </div>
+          </div>
+
+          <!-- 4-Card Substats Grid -->
+          <div class="hero-substats-grid">
+            <div class="substat-card">
+              <div class="substat-card-top">
+                <span class="substat-icon"><svg class="ico"><use href="#i-download"/></svg></span>
+                <span class="substat-label">输入算力 (Input)</span>
+              </div>
+              <div class="substat-val" id="stat-input-tokens">-</div>
+              <span class="substat-hint">上下文注入与提示词</span>
+            </div>
+            <div class="substat-card">
+              <div class="substat-card-top">
+                <span class="substat-icon"><svg class="ico"><use href="#i-upload"/></svg></span>
+                <span class="substat-label">输出生成 (Output)</span>
+              </div>
+              <div class="substat-val" id="stat-output-tokens">-</div>
+              <span class="substat-hint">模型纯净代码产出</span>
+            </div>
+            <div class="substat-card">
+              <div class="substat-card-top">
+                <span class="substat-icon"><svg class="ico"><use href="#i-message"/></svg></span>
+                <span class="substat-label">累计会话数</span>
+              </div>
+              <div class="substat-val" id="stat-session-count">-</div>
+              <span class="substat-hint">深度人机协同任务</span>
+            </div>
+            <div class="substat-card">
+              <div class="substat-card-top">
+                <span class="substat-icon"><svg class="ico"><use href="#i-shield"/></svg></span>
+                <span class="substat-label">数据可信度</span>
+              </div>
+              <div class="substat-val-acc" id="stat-accuracy" title="真实统计：读取官方 usage 字段，精确无误；模型估算：本地无官方计数，按负载/轮数模型折算">-</div>
+              <span class="substat-hint">官方精确计数 + 严谨估算</span>
+            </div>
           </div>
         </div>
 
-        <div class="hero-substats">
-          <div class="substat-item">
-            <span class="substat-label">输入算力 (Input)</span>
-            <span class="substat-val" id="stat-input-tokens">-</span>
-          </div>
-          <div class="substat-item">
-            <span class="substat-label">输出生成 (Output)</span>
-            <span class="substat-val" id="stat-output-tokens">-</span>
-          </div>
-          <div class="substat-item">
-            <span class="substat-label">累计会话数</span>
-            <span class="substat-val" id="stat-session-count">-</span>
-          </div>
-          <div class="substat-item">
-            <span class="substat-label">数据可信度</span>
-            <span class="substat-val" id="stat-accuracy" title="真实统计：读取官方 usage 字段，精确无误；模型估算：本地无官方计数，按负载/轮数模型折算">-</span>
-          </div>
-        </div>
+        <div class="hero-right">
+          <!-- Card: 战力等效换算 (高价值生产力当量) -->
+          <div class="productivity-card">
+            <div class="prod-header">
+              <span class="prod-icon"><svg class="ico"><use href="#i-zap"/></svg></span>
+              <span class="prod-title">战力等效换算</span>
+              <button class="prod-badge real clickable" id="btn-show-formula" title="点击查看 100% 透明工程换算公式与推导依据">
+                <svg class="ico mini-ico"><use href="#i-shield"/></svg> 严谨去水折算 ↗
+              </button>
+            </div>
+            
+            <!-- 指标 1: 代码行数与中大型系统当量 -->
+            <div class="prod-metric">
+              <div class="metric-num" id="stat-lines-code">-</div>
+              <div class="metric-label">等效 AI 纯净代码生成 (行)</div>
+              <div class="metric-sub-pills">
+                <span class="metric-badge-pill cyan" id="stat-projects-equiv" title="按商业级系统标准 2.5 万行核心有效代码/套折算">≈ 交付 0 套中大型工程</span>
+              </div>
+            </div>
 
-        <!-- Milestone Trophy Wall -->
-        <div class="milestone-wall" id="milestone-wall">
-          <!-- Dynamically populated milestone trophy badges -->
+            <!-- 指标 2: 节约人类编码工时与工作日/人月/人年多级折算 -->
+            <div class="prod-metric">
+              <div class="metric-num highlight" id="stat-hours-saved">-</div>
+              <div class="metric-label">节约人类编码工时 (小时)</div>
+              <div class="metric-sub-pills" id="stat-time-breakdown">
+                <span class="metric-badge-pill green" id="stat-days-saved" title="按 8 小时/工作日折算">≈ 0 工作日</span>
+                <span class="metric-badge-pill green" id="stat-months-saved" title="按 21.75 工作日 (174 小时)/研发人月折算">0 人月</span>
+                <span class="metric-badge-pill green" id="stat-years-saved" title="按 2088 小时/人年当量折算">0 人年</span>
+              </div>
+            </div>
+
+            <!-- 指标 3: 研发生产力投资与全栈团队当量 -->
+            <div class="prod-metric">
+              <div class="metric-num gold-highlight" id="stat-rnd-value">-</div>
+              <div class="metric-label">
+                等效企业研发人力成本 (元)
+                <button class="formula-mini-btn" id="btn-info-cost" title="点击查看研发人力成本公式与推导依据">ⓘ 算法公式</button>
+              </div>
+              <div class="metric-sub-pills">
+                <span class="metric-badge-pill gold" id="stat-team-equiv" title="按工程师综合用人成本 ¥100/时折算团队人力投入">≈ 相当于 0 人技术团队年产出</span>
+              </div>
+            </div>
+
+            <div class="prod-hint-note" id="prod-formula-note" title="点击查看 100% 透明工程去水折算公式与推导依据">
+              <span class="hint-bullet">●</span>
+              <span class="hint-note-text">剔除重读水分 · 纯净输出折算</span>
+              <span class="hint-more-link">推导公式 ↗</span>
+            </div>
+
+            <div class="scan-time-tag" id="stat-scan-time">
+              耗时 0.0s 自动完成全盘侦测
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="hero-right">
-        <div class="productivity-card">
-          <div class="prod-header">
-
-            <span class="prod-title">战力等效换算</span>
-          </div>
-          <div class="prod-metric">
-            <div class="metric-num" id="stat-lines-code">-</div>
-            <div class="metric-label">等效 AI 辅助编写代码 (行)</div>
-          </div>
-          <div class="prod-metric">
-            <div class="metric-num highlight" id="stat-hours-saved">-</div>
-            <div class="metric-label">节约人类编码工时 (小时)</div>
-          </div>
-          <div class="scan-time-tag" id="stat-scan-time">
-            耗时 0.0s 自动完成全盘侦测
-          </div>
-        </div>
+      <!-- Milestone Trophy Wall (Full Width Across Bottom) -->
+      <div class="milestone-wall" id="milestone-wall">
+        <!-- Dynamically populated milestone trophy badges -->
       </div>
     </section>
 
@@ -160,28 +349,57 @@
 
     <!-- ECharts Visualization Suite (full-width chart cards) -->
     <section class="card glassmorphism full-width" id="section-charts">
-      <div class="card-header">
+      <div class="card-header chart-header-flex">
         <div class="card-title-box">
-          <h3>战绩可视化面板</h3>
-          <span class="card-tag">ECharts · 实时渲染</span>
+          <h3>战绩可视化多维矩阵</h3>
+          <span class="card-tag" id="chart-tag-status">6大维度 · 4项专业透视</span>
+        </div>
+
+        <!-- Chart Mode Switcher (21st.dev 风格分栏切换药丸) -->
+        <div class="chart-tab-switcher" id="chart-tab-switcher">
+          <button class="chart-tab-btn active" data-chart-tab="radar" title="六维全息战力罗盘">
+            <span><svg class="ico"><use href="#i-compass"/></svg> 六维战力罗盘</span>
+          </button>
+          <button class="chart-tab-btn" data-chart-tab="circadian" title="24小时极客作息燃尽图">
+            <span><svg class="ico"><use href="#i-moon"/></svg> 24h作息生物钟</span>
+          </button>
+          <button class="chart-tab-btn" data-chart-tab="sunburst" title="AI智能体与模型多层嵌套旭日图">
+            <span><svg class="ico"><use href="#i-pie"/></svg> 模型生态旭日图</span>
+          </button>
+          <button class="chart-tab-btn" data-chart-tab="velocity" title="时序资产累计与增长速率双轴图">
+            <span><svg class="ico"><use href="#i-trend"/></svg> 资产跃升与速率</span>
+          </button>
         </div>
       </div>
 
+      <!-- Top Row: Dual Core Charts (工具生态占比环形图 + 核心特色交互图表) -->
       <div class="chart-metrics-grid">
         <div class="chart-box">
-          <h4 class="sub-heading">工具算力占比</h4>
+          <div class="chart-title-row">
+            <h4 class="sub-heading">工具算力资产分布</h4>
+            <span class="chart-sub-tag">按 16 款智能体占比</span>
+          </div>
           <div id="chart-tools-donut" class="echart-canvas"></div>
         </div>
-        <div class="chart-box">
-          <h4 class="sub-heading">综合战力雷达</h4>
-          <div id="chart-power-radar" class="echart-canvas"></div>
+
+        <!-- Dynamic Featured Chart Container (按 Tab 动态切换展示) -->
+        <div class="chart-box featured-chart-box">
+          <div class="chart-title-row">
+            <h4 class="sub-heading" id="featured-chart-title">六维全息战力罗盘</h4>
+            <span class="chart-sub-tag" id="featured-chart-tag">VS 顶级架构师基线</span>
+          </div>
+          <div id="chart-featured-canvas" class="echart-canvas"></div>
         </div>
       </div>
 
       <div class="input-output-bar" id="chart-io-bar"></div>
 
+      <!-- Bottom Row: 资产跃升趋势面积图 -->
       <div class="monthly-chart-box">
-        <h4 class="sub-heading">月度消耗对比</h4>
+        <div class="chart-title-row">
+          <h4 class="sub-heading">算力资产时序跃升与燃烧脉冲</h4>
+          <span class="chart-sub-tag">累计资产曲线 + 月度消耗柱状</span>
+        </div>
         <div id="chart-monthly-area" class="echart-canvas"></div>
       </div>
     </section>
@@ -265,7 +483,7 @@
         </div>
         <div class="heatmap-stat-item">
           <span class="stat-indicator-dot streak"></span>
-          <span id="streak-stat"><span class="streak-flame">🔥</span> 连续燃烧: - 天</span>
+          <span id="streak-stat"><span class="streak-flame"><svg class="ico"><use href="#i-flame"/></svg></span> 连续燃烧: - 天</span>
         </div>
         <div class="heatmap-stat-item">
           <span class="stat-indicator-dot curr"></span>
@@ -304,12 +522,91 @@
     </section>
   </main>
 
+  <!-- High-End App Footer -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <div class="footer-brand-col">
+        <div class="footer-brand">
+          <span class="footer-logo-icon"><svg class="ico"><use href="#i-zap"/></svg></span>
+          <span class="footer-brand-name">TokenBurn</span>
+          <span class="footer-version-tag">v3.6</span>
+        </div>
+        <p class="footer-desc">
+          专为全栈工程师与 AI 极客打造的本地优先（Local-First）AI 战绩看板。聚合 16 款主流 AI 编程助手与 Agent 算力消耗，让每一次心智投入都有迹可循。
+        </p>
+        <div class="footer-badges">
+          <span class="footer-pill"><span class="pill-dot green"></span> 100% 本地离线解析</span>
+          <span class="footer-pill"><svg class="ico"><use href="#i-shield"/></svg> 零数据上报 / 零云端依赖</span>
+          <span class="footer-pill"><svg class="ico"><use href="#i-book"/></svg> MIT 开源协议</span>
+        </div>
+      </div>
+
+      <div class="footer-nav-col">
+        <div class="footer-col-title">开源与支持</div>
+        <ul class="footer-links">
+          <li>
+            <a href="https://github.com/yibeigen/tokenburn" target="_blank" rel="noopener noreferrer">
+              <svg class="footer-link-svg" viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path></svg>
+              GitHub 源码仓库
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/yibeigen/tokenburn/issues" target="_blank" rel="noopener noreferrer">
+              <svg class="ico"><use href="#i-bulb"/></svg> 提 Issue / 适配新工具
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/yibeigen/tokenburn/releases" target="_blank" rel="noopener noreferrer">
+              <svg class="ico"><use href="#i-rocket"/></svg> 发行版本历史 (Changelog)
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/yibeigen/tokenburn/stargazers" target="_blank" rel="noopener noreferrer">
+              <svg class="ico ico-fill"><use href="#i-star"/></svg> 给作者点个 Star
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer-author-col">
+        <div class="footer-col-title">作者与支持</div>
+        <div class="footer-author-info">
+          <div class="footer-author-badge" id="footer-author-badge" role="button" tabindex="0" title="点击查看作者介绍、公众号与赞赏码">
+            <img src="assets/avatar.png" alt="艺杯羹" class="footer-author-avatar-img">
+            <div class="footer-author-meta">
+              <span class="footer-author-name">艺杯羹</span>
+              <span class="footer-author-handle">@yibeigen · 独立开发者</span>
+            </div>
+          </div>
+          <p class="footer-author-sub">
+            微信公众号【<strong>艺杯羹</strong>】主理人 · 专注本地优先 AI 提效工具研发。
+          </p>
+          <div class="footer-qr-actions">
+            <button class="footer-action-chip" id="btn-footer-wechat">
+              <span><svg class="ico"><use href="#i-megaphone"/></svg> 关注公众号</span>
+            </button>
+            <button class="footer-action-chip reward" id="btn-footer-reward">
+              <span><svg class="ico"><use href="#i-coffee"/></svg> 赞赏作者</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-bottom-inner">
+        <span>© 2024-2026 TokenBurn · Designed & Built with <svg class="ico ico-fill"><use href="#i-heart"/></svg> by <a href="https://github.com/yibeigen" target="_blank" rel="noopener noreferrer" class="footer-author-link">艺杯羹 (@yibeigen)</a> · 微信: peace-83</span>
+        <span class="footer-disclaimer">所有 Token 消耗数据与 SQLite 数据库均严格存储于用户本地环境</span>
+      </div>
+    </div>
+  </footer>
+
   <!-- Poster Modal -->
   <div class="modal-overlay" id="poster-modal">
     <div class="modal-card glassmorphism">
       <div class="modal-header">
-          <h3>你的赛博战绩专属海报</h3>
-        <button class="btn-close" id="btn-close-modal">X</button>
+        <h3>你的赛博战绩专属海报</h3>
+        <button class="btn-close" id="btn-close-modal">×</button>
       </div>
       <div class="modal-body">
         <div class="canvas-container">
@@ -323,10 +620,312 @@
     </div>
   </div>
 
+  <!-- Author, WeChat Official Account & Sponsor Modal (21st.dev & Uiverse 现代便当盒分栏设计) -->
+  <div class="modal-overlay" id="author-modal">
+    <div class="modal-card glassmorphism author-modal-card">
+      <div class="modal-header">
+        <div class="modal-title-box">
+          <span class="modal-header-icon"><svg class="ico"><use href="#i-coffee"/></svg></span>
+          <h3>关于作者 · 艺杯羹</h3>
+        </div>
+        <button class="btn-close" id="btn-close-author-modal" title="关闭弹窗">×</button>
+      </div>
+
+      <div class="modal-body author-modal-body">
+        <!-- Author Profile Summary (Fixed at top, pristine visibility) -->
+        <div class="author-modal-profile">
+          <div class="author-modal-avatar-box zoomable-avatar-box" id="modal-author-avatar-box" title="单击查看作者高清头像大图" data-zoom-src="assets/avatar.png" data-zoom-title="作者头像 · 艺杯羹" data-zoom-sub="效率工具创作者 · @yibeigen · 独立开发" data-zoom-badge="独立开发" data-zoom-icon="i-user" data-zoom-type="avatar">
+            <img src="assets/avatar.png" alt="艺杯羹" class="author-modal-avatar zoomable-img">
+            <span class="avatar-online-badge">独立开发</span>
+            <span class="avatar-zoom-hover-hint" title="单击放大头像"><svg class="ico"><use href="#i-search"/></svg></span>
+          </div>
+          <div class="author-modal-details">
+            <div class="author-modal-name-row">
+              <h4>艺杯羹</h4>
+              <span class="author-modal-tag">效率工具创作者</span>
+              <a href="https://github.com/yibeigen" target="_blank" rel="noopener noreferrer" class="author-modal-gh">@yibeigen <svg class="ico"><use href="#i-external"/></svg></a>
+            </div>
+            <p class="author-modal-bio">
+              坚持「本地优先（Local-First）」与「100% 隐私离线」工程理念，致力于打造属于 AI 时代极客的硬核效率武器。
+            </p>
+            <div class="author-modal-links">
+              <a href="https://blog.csdn.net/qq_46987323" target="_blank" rel="noopener noreferrer" class="link-pill primary-csdn"><svg class="ico"><use href="#i-filetext"/></svg> CSDN 博客主页</a>
+              <a href="https://yibeigen.pages.dev/" target="_blank" rel="noopener noreferrer" class="link-pill"><svg class="ico"><use href="#i-globe"/></svg> 独立个人站点</a>
+              <span class="link-pill"><svg class="ico"><use href="#i-message"/></svg> 微信: peace-83</span>
+              <span class="link-pill"><svg class="ico"><use href="#i-message"/></svg> QQ: 3057454077</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Uiverse Segmented Tab Switcher -->
+        <div class="modal-tabs-switcher" role="tablist">
+          <button class="modal-tab-btn active" id="tab-btn-wechat" data-tab="wechat" role="tab" aria-selected="true">
+            <span class="tab-btn-icon"><svg class="ico"><use href="#i-megaphone"/></svg></span>
+            <span>关注公众号【艺杯羹】</span>
+          </button>
+          <button class="modal-tab-btn" id="tab-btn-reward" data-tab="reward" role="tab" aria-selected="false">
+            <span class="tab-btn-icon"><svg class="ico"><use href="#i-coffee"/></svg></span>
+            <span>请作者喝杯咖啡 (赞赏支持)</span>
+          </button>
+        </div>
+
+        <!-- Tab Content Panes -->
+        <div class="modal-tab-panes">
+          <!-- Pane A: WeChat -->
+          <div class="tab-pane active" id="pane-wechat" role="tabpanel">
+            <div class="pane-qr-layout">
+              <div class="pane-qr-img-box wechat-box zoomable-qr-box" id="box-qr-wechat" title="单击放大二维码，方便手机直接扫码" data-zoom-src="assets/wechat_qr.png" data-zoom-title="微信官方公众号【艺杯羹】" data-zoom-sub="第一时间获取最新版内测、AI 效率工具集与硬核提效教程" data-zoom-badge="微信搜一搜【艺杯羹】" data-zoom-icon="i-megaphone" data-zoom-type="qr">
+                <img src="assets/wechat_qr.png" alt="公众号【艺杯羹】二维码" class="pane-qr-img zoomable-img">
+                <div class="qr-box-badges">
+                  <span class="qr-scan-badge">微信扫一扫</span>
+                  <span class="qr-zoom-tag"><svg class="ico"><use href="#i-search"/></svg> 单击放大</span>
+                </div>
+              </div>
+              <div class="pane-qr-info">
+                <h5>关注官方微信公众号【艺杯羹】</h5>
+                <p class="pane-qr-sub">第一时间获取 TokenBurn 最新版本内测、AI 效率工具集与硬核提效教程。</p>
+                <ul class="pane-perk-list">
+                  <li><span class="perk-bullet"><svg class="ico"><use href="#i-zap"/></svg></span> 第一时间体验全新 AI Agent 适配与离线工具</li>
+                  <li><span class="perk-bullet"><svg class="ico"><use href="#i-bulb"/></svg></span> 深度探索本地大模型、工作流自动化与知识工程</li>
+                  <li><span class="perk-bullet"><svg class="ico"><use href="#i-rocket"/></svg></span> 持续分享独立开发实战经验与极客提效技巧</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pane B: Reward -->
+          <div class="tab-pane" id="pane-reward" role="tabpanel">
+            <div class="pane-qr-layout">
+              <div class="pane-qr-img-box reward-box zoomable-qr-box" id="box-qr-reward" title="单击放大赞赏码，方便手机直接扫码" data-zoom-src="assets/reward_qr.png" data-zoom-title="微信赞赏支持码【艺杯羹】" data-zoom-sub="感谢您对开源与持续迭代的认可！鼓励作者持续维护与适配更多生态" data-zoom-badge="微信赞赏支持" data-zoom-icon="i-coffee" data-zoom-type="qr">
+                <img src="assets/reward_qr.png" alt="微信赞赏支持码" class="pane-qr-img zoomable-img">
+                <div class="qr-box-badges">
+                  <span class="qr-scan-badge reward">微信赞赏码</span>
+                  <span class="qr-zoom-tag reward"><svg class="ico"><use href="#i-search"/></svg> 单击放大</span>
+                </div>
+              </div>
+              <div class="pane-qr-info">
+                <h5>请作者喝杯热咖啡 <svg class="ico"><use href="#i-coffee"/></svg></h5>
+                <p class="pane-qr-sub">TokenBurn 是一款 100% 免费开源、无云端上传、无任何广告的纯净效率工具。</p>
+                <div class="reward-quote-box">
+                  <p>“如果这个项目为你盘点了珍贵的 AI 算力资产、激发了工程灵感，欢迎赞赏支持！您的鼓励是作者持续维护与适配更多生态的核心动力 ^_^”</p>
+                </div>
+                <div class="pane-meta-pill-row">
+                  <span class="meta-mini-tag">开源维护</span>
+                  <span class="meta-mini-tag">持续迭代</span>
+                  <span class="meta-mini-tag">适配更多 IDE</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <a href="https://github.com/yibeigen/tokenburn" target="_blank" rel="noopener noreferrer" class="btn btn-github">
+          <svg class="gh-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path></svg>
+          <span>在 GitHub 给项目点个 Star <svg class="ico ico-fill"><use href="#i-star"/></svg></span>
+        </a>
+        <button class="btn btn-primary" id="btn-author-modal-ok">我知道了</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Snapshot Archive Viewer Modal (本地数据归档查看与操作中心) -->
+  <div class="modal-overlay" id="snapshot-modal">
+    <div class="modal-card glassmorphism snapshot-modal-card">
+      <div class="modal-header">
+        <div class="modal-title-box">
+          <span class="modal-header-icon"><svg class="ico"><use href="#i-folder"/></svg></span>
+          <h3>本地战绩归档数据中心</h3>
+          <span class="modal-title-badge">100% 离线数据</span>
+        </div>
+        <button class="btn-close" id="btn-close-snapshot-modal" title="关闭弹窗">×</button>
+      </div>
+
+      <div class="modal-body snapshot-modal-body">
+        <!-- Path Info Bento Box -->
+        <div class="snap-info-bento">
+          <div class="snap-info-row">
+            <span class="snap-info-label"><svg class="ico"><use href="#i-file"/></svg> 归档文件完整路径</span>
+            <div class="snap-path-box">
+              <input type="text" readonly id="snap-file-path-input" value="正在读取本地路径..." class="snap-path-input">
+              <button class="btn btn-mini-copy" id="btn-copy-snap-file-path" title="复制完整文件路径">复制文件路径</button>
+            </div>
+          </div>
+          <div class="snap-info-row">
+            <span class="snap-info-label"><svg class="ico"><use href="#i-folder"/></svg> 归档所在文件夹</span>
+            <div class="snap-path-box">
+              <input type="text" readonly id="snap-dir-path-input" value="正在读取本地路径..." class="snap-path-input">
+              <button class="btn btn-mini-copy" id="btn-copy-snap-dir-path" title="复制所在文件夹路径">复制文件夹路径</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Quick Action Cards (Bento Grid) -->
+        <div class="snap-actions-grid">
+          <button class="snap-action-card" id="btn-snap-card-open-tab" title="在新标签页全屏查看原始 JSON 数据">
+            <div class="snap-card-icon-box cyan"><svg class="ico"><use href="#i-globe"/></svg></div>
+            <div class="snap-card-content">
+              <h4>在浏览器新标签页查看</h4>
+              <p>原生全屏高亮浏览完整 snapshot.json</p>
+            </div>
+            <span class="snap-card-arrow"><svg class="ico"><use href="#i-external"/></svg></span>
+          </button>
+
+          <a href="/api/snapshot-download" download="snapshot.json" class="snap-action-card" id="btn-snap-card-download" title="下载归档文件备份到本地">
+            <div class="snap-card-icon-box green"><svg class="ico"><use href="#i-database"/></svg></div>
+            <div class="snap-card-content">
+              <h4>下载 snapshot.json</h4>
+              <p>导出备份到您的电脑下载文件夹</p>
+            </div>
+            <span class="snap-card-arrow">↓</span>
+          </a>
+
+          <button class="snap-action-card" id="btn-snap-card-system-dir" title="在系统资源管理器中打开该文件夹">
+            <div class="snap-card-icon-box purple"><svg class="ico"><use href="#i-terminal"/></svg></div>
+            <div class="snap-card-content">
+              <h4>在 Windows 资源管理器打开</h4>
+              <p>调用系统 PowerShell 直接打开文件夹</p>
+            </div>
+            <span class="snap-card-arrow"><svg class="ico"><use href="#i-external"/></svg></span>
+          </button>
+
+          <button class="snap-action-card" id="btn-snap-card-copy-json" title="复制全部 JSON 内容到剪贴板">
+            <div class="snap-card-icon-box orange"><svg class="ico"><use href="#i-clipboard"/></svg></div>
+            <div class="snap-card-content">
+              <h4>复制全部 JSON 数据</h4>
+              <p>将完整快照内容直接写入系统剪贴板</p>
+            </div>
+            <span class="snap-card-arrow">✓</span>
+          </button>
+        </div>
+
+        <!-- JSON Preview Box -->
+        <div class="snap-preview-section">
+          <div class="snap-preview-header">
+            <span><svg class="ico"><use href="#i-bars"/></svg> 数据结构实时预览 (snapshot.json 摘要)</span>
+            <span class="snap-size-badge" id="snap-size-badge">已格式化 · 约 165 KB</span>
+          </div>
+          <pre class="snap-json-code-box" id="snap-json-code-box"><code>正在载入本地快照数据...</code></pre>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <span class="snap-footer-hint"><svg class="ico"><use href="#i-bulb"/></svg> 提示：如遇 Windows 窗口被其他软件遮挡，可按 <kbd>Win</kbd> + <kbd>E</kbd> 打开资源管理器，粘贴上方路径直达。</span>
+        <button class="btn btn-primary" id="btn-close-snapshot-modal-ok">完成</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Lightbox Zoom Modal (大图查看与扫码放大器) -->
+  <div class="modal-overlay lightbox-overlay" id="image-lightbox-modal" aria-hidden="true" role="dialog">
+    <div class="lightbox-card glassmorphism">
+      <div class="lightbox-header">
+        <div class="lightbox-title-box">
+          <span class="lightbox-icon" id="lightbox-icon"><svg class="ico"><use href="#i-search"/></svg></span>
+          <div class="lightbox-title-texts">
+            <h4 class="lightbox-title" id="lightbox-title">高清图片放大预览</h4>
+            <p class="lightbox-subtitle" id="lightbox-subtitle">手机对准屏幕即可直接扫码识别 · 单击任意处或按 Esc 关闭</p>
+          </div>
+        </div>
+        <button class="btn-close lightbox-close-btn" id="btn-close-lightbox" title="关闭大图预览 (Esc)">×</button>
+      </div>
+
+      <div class="lightbox-body">
+        <div class="lightbox-img-frame" id="lightbox-img-frame" title="再次单击图片可关闭预览">
+          <img src="" alt="" class="lightbox-img" id="lightbox-img">
+          <div class="lightbox-badge-row">
+            <span class="lightbox-status-pill" id="lightbox-badge"><svg class="ico"><use href="#i-phone"/></svg> 手机微信扫一扫即可识别</span>
+            <span class="lightbox-status-pill hint-pill"><svg class="ico"><use href="#i-search"/></svg> 单击图片也可直接关闭</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lightbox-footer">
+        <span class="lightbox-footer-tip"><svg class="ico"><use href="#i-bulb"/></svg> 提示：支持手机直接对准屏幕扫码 · 单击背景或按 <kbd>Esc</kbd> 快速关闭</span>
+        <div class="lightbox-actions">
+          <a href="" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" id="btn-lightbox-raw" title="在新标签页查看高清原图">
+            <span>在新窗口打开</span>
+          </a>
+          <button class="btn btn-primary btn-sm" id="btn-lightbox-ok">完成</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formula Explanation Modal (严谨工程去水推导公式模态弹窗) -->
+  <div class="modal-overlay" id="formula-modal" role="dialog" aria-modal="true" aria-labelledby="formula-modal-title">
+    <div class="modal-card glassmorphism formula-modal-card">
+      <div class="modal-header">
+        <div class="modal-title-box">
+          <span class="modal-header-icon"><svg class="ico"><use href="#i-shield"/></svg></span>
+          <h3 id="formula-modal-title">战力等效换算 · 严谨工程去水推导公式</h3>
+        </div>
+        <button class="btn-close" id="btn-close-formula" title="关闭弹窗 (Esc)">×</button>
+      </div>
+
+      <div class="modal-body formula-modal-body">
+        <div class="formula-banner">
+          <div class="formula-banner-badge">💡 拒绝虚胖快乐表 · 坚守工程第一性原理</div>
+          <p>很多市面工具将数亿 Token 直接折算为数千万行代码（相当于凭空生成了数个大型操作系统），这是典型的<strong>自嗨型“快乐表”</strong>。TokenBurn 遵循经典软件工程度量模型，剔除机器阅读上下文的重复水分，仅按模型实际生成的最终交付净产出进行推导。</p>
+        </div>
+
+        <div class="formula-steps-list">
+          <div class="formula-step-card">
+            <div class="step-badge">步骤 1</div>
+            <div class="step-detail">
+              <div class="step-header-title">剔除 85%+ 上下文注入水分，只提取 Net Output 纯净代码生成</div>
+              <p>全域总 Token 中，约 <strong>84.3% 是 Input Tokens</strong>（机器阅读的历史上下文、项目文件、报错信息）。本换算坚决剔除此部分重复阅读开销，仅提取大模型真正生成的 <strong>4,316 万 Output Tokens</strong> 作为原始生产力基数。</p>
+            </div>
+          </div>
+
+          <div class="formula-step-card">
+            <div class="step-badge">步骤 2</div>
+            <div class="step-detail">
+              <div class="step-header-title">代码交付留存率 (Code Yield Rate)：约 120 Tokens / 生产级有效行</div>
+              <p>在 Agentic 交互式开发中，模型包含思考推理、方案解释与反复调试（平均每 8~10 轮修改试错最终沉淀 1 行代码）：</p>
+              <div class="formula-math-box">43,167,683 净输出 Tokens ÷ 120 ≈ <strong>359,790 行最终业务代码</strong></div>
+              <p class="step-sub-note">平均每场会话沉淀约 <strong>465 行有效代码</strong>，相当于独立交付了 <strong>14 套</strong> 2.5万行的中大型企业级系统，与真实敏捷开发体验完全吻合。</p>
+            </div>
+          </div>
+
+          <div class="formula-step-card">
+            <div class="step-badge">步骤 3</div>
+            <div class="step-detail">
+              <div class="step-header-title">工时换算：行业标准敏捷交付人效 80 行 / 研发工时</div>
+              <p>依据经典软件工程度量（《人月神话》与 COCOMO 综合人效模型），资深全栈工程师在敏捷交付模式下（含需求构思、架构设计、编写与单元自测），综合净产出基准约为 80 行/小时：</p>
+              <div class="formula-math-box">359,790 行 ÷ 80 行/工时 ≈ <strong>4,497 研发工时</strong></div>
+              <div class="formula-sub-breakdown">
+                <span>≈ <strong>562 工作日</strong> (8h/天)</span>
+                <span>≈ <strong>25.8 研发人月</strong> (174h/月)</span>
+                <span>≈ <strong>2.2 人年当量</strong> (2,088h/年)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="formula-step-card">
+            <div class="step-badge">步骤 4</div>
+            <div class="step-detail">
+              <div class="step-header-title">企业级研发人力成本：¥ 100 / 工时行业底线基准</div>
+              <p>国内一线与新一线城市资深工程师税前月薪约 1.5~2.2 万元，企业综合用人成本（含企业五险一金、年终奖、工位设备分摊，通常为税前工资 1.3~1.4 倍）约为 1.8~2.5 万元/月（合 100~140 元/小时）。我们采用最保守的一线底线标准 <strong>¥100/时</strong>：</p>
+              <div class="formula-math-box">4,497 工时 × ¥100/时 ≈ <strong>¥ 45.0 万元企业研发人力成本</strong></div>
+              <p class="step-sub-note">💡 <strong>核心涵义</strong>：相当于企业雇佣 <strong>2 名资深全栈工程师全职奋斗整整 1 年</strong>（人均年薪酬成本约 22.5 万元）的同等工程交付量！</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer formula-footer">
+        <span class="formula-footer-audit"><svg class="ico"><use href="#i-shield"/></svg> 100% 本地离线计算 · 零数据上报 · 经得起任何技术总监与审计推敲</span>
+        <button class="btn btn-primary" id="btn-formula-modal-ok">我知道了</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification Container -->
   <div id="toast-container" class="toast-container"></div>
 
   <script src="vendor/echarts.min.js"></script>
-  <script src="app.js?v=3.6"></script>
+  <script src="app.js?v=5.3"></script>
 </body>
 </html>

@@ -14,8 +14,9 @@ export class WorkbuddyAdapter {
       return records;
     }
 
+    let db = null;
     try {
-      const db = new DatabaseSync(dbPath, { readOnly: true });
+      db = new DatabaseSync(dbPath, { readOnly: true });
 
       // Get sessions mapping with real schema (title, custom_title, cwd, model)
       const sessionMap = new Map();
@@ -79,6 +80,8 @@ export class WorkbuddyAdapter {
       }
     } catch (e) {
       console.error('[WorkbuddyAdapter] 扫描异常:', e.message);
+    } finally {
+      try { db?.close(); } catch (e) {}
     }
 
     return records;

@@ -31,8 +31,9 @@ export class WindsurfAdapter {
           } catch (e) {}
         }
 
+        let db = null;
         try {
-          const db = new DatabaseSync(dbFile, { readOnly: true });
+          db = new DatabaseSync(dbFile, { readOnly: true });
           const cascadeRow = db.prepare("SELECT value FROM ItemTable WHERE key LIKE '%cascade%' LIMIT 1").get();
           if (cascadeRow) {
             const stat = fs.statSync(dbFile);
@@ -64,7 +65,10 @@ export class WindsurfAdapter {
               details: { project: projectName, sessions: sessionCount }
             });
           }
-        } catch (e) {}
+        } catch (e) {
+        } finally {
+          try { db?.close(); } catch (e) {}
+        }
       }
     } catch (e) {}
 

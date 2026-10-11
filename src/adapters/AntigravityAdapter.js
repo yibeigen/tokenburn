@@ -51,8 +51,9 @@ export class AntigravityAdapter {
 
       for (const file of dbFiles) {
         const fullPath = path.join(agyDir, file);
+        let db = null;
         try {
-          const db = new DatabaseSync(fullPath, { readOnly: true });
+          db = new DatabaseSync(fullPath, { readOnly: true });
           const stat = fs.statSync(fullPath);
 
           let cascadeId = path.basename(file, '.db');
@@ -245,7 +246,10 @@ export class AntigravityAdapter {
               dayIndex++;
             }
           }
-        } catch (e) {}
+        } catch (e) {
+        } finally {
+          try { db?.close(); } catch (e) {}
+        }
       }
     } catch (e) {
       console.error('[AntigravityAdapter] 扫描异常:', e.message);

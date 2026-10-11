@@ -14,8 +14,9 @@ export class LingmaAdapter {
       return records;
     }
 
+    let db = null;
     try {
-      const db = new DatabaseSync(dbPath, { readOnly: true });
+      db = new DatabaseSync(dbPath, { readOnly: true });
 
       // 1. Check table existence
       const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table'").all().map(t => t.name);
@@ -99,6 +100,8 @@ export class LingmaAdapter {
       }
     } catch (e) {
       console.error('[LingmaAdapter] 扫描异常:', e.message);
+    } finally {
+      try { db?.close(); } catch (e) {}
     }
 
     return records;
